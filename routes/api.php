@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MfaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/authenticate', [AuthController::class, 'authenticate']);
+
+Route::middleware('auth:sanctum')->name('mfa.')->group(function () {
+    Route::get('/mfa', [MfaController::class, 'index'])->name('index');
+    Route::post('/mfa', [MfaController::class, 'store'])->name('store');
+});
