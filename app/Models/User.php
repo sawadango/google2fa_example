@@ -7,11 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
  * @property string $name
  * @property string $email
+ * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property Carbon|null $create_at
+ * @property Carbon|null $updated_at
+ * @property string|null $google2fa_secret
+ * @property string|null $google2fa_timestamp
  */
 class User extends Authenticatable
 {
@@ -26,6 +33,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google2fa_secret',
+        'google2fa_timestamp',
     ];
 
     /**

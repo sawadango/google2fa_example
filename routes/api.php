@@ -24,4 +24,5 @@ Route::post('/authenticate', [AuthController::class, 'authenticate']);
 
 Route::middleware('auth:sanctum')->name('mfa.')->group(function () {
     Route::get('/mfa', [MfaController::class, 'index'])->name('index');
+    Route::post('/mfa', [MfaController::class, 'store'])->name('store');
 });

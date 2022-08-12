@@ -7,6 +7,7 @@ use App\Models\User;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Arr;
 
 class MfaService
 {
@@ -56,5 +57,29 @@ class MfaService
             ->setSize(300);
 
         return $this->writer->write($qrCode)->getDataUri();
+    }
+
+    /**
+     * @param array $conditions
+     * @param User $user
+     * 
+     * @return void
+     */
+    public function verify(array $conditions, User $user): void
+    {
+        $secretKey = Arr::get($conditions, 'secretKey');
+        assert(is_string($secretKey));
+        $otp = Arr::get($conditions, 'otp');
+        assert(is_string($otp));
+
+        $result = $this->google2fa->verifyKey($secretKey, $otp);
+
+        if (!$result) {
+            throw new \Exception('認証できませんでした');
+        }
+
+        $user->update([
+            'google2fa_secret' => $secretKey,
+        ]);
     }
 }
