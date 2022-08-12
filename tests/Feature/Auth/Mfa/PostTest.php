@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
-class GetIndexTest extends TestCase
+class PostTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,14 +18,25 @@ class GetIndexTest extends TestCase
      */
     public function testOk()
     {
+        $this->markTestSkipped('モック化したら外す');
+
         $user = $this->createUser();
         $user->wasRecentlyCreated = false;
         $this->actingAs($user);
 
-        $response = $this->getIndex();
-        // dd($response);
+        $secretKey = 'ZTDAND2IEPZWDCF7';
+        $otp = '196452';
+
+        $response = $this->postMfa([
+            'secretKey' => $secretKey,
+            'otp' => $otp
+        ]);
 
         $response->assertStatus(200);
+
+        $this->assertDatabaseHas('users', [
+            'google2fa_secret' => $secretKey,
+        ]);
     }
 
     /**
@@ -34,10 +45,14 @@ class GetIndexTest extends TestCase
      *
      * @return TestResponse
      */
-    private function getIndex(): TestResponse
+    private function postMfa(array $conditions): TestResponse
     {
-        return $this->get(
-            '/api/mfa'
+        return $this->post(
+            '/api/mfa',
+            [
+                'secretKey'  => $conditions['secretKey'],
+                'otp' => $conditions['otp'],
+            ]
         );
     }
 
