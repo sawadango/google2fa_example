@@ -27,7 +27,6 @@ class AuthPostTest extends TestCase
         $response = $this->postAuthenticate($user, self::TRUE_PASSWORD);
 
         $response->assertStatus(200);
-        dd($response);
     }
 
 
