@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $create_at
  * @property Carbon|null $updated_at
  * @property string|null $google2fa_secret
- * @property string|null $google2fa_timestamp
+ * @property int|null $google2fa_timestamp
  */
 class User extends Authenticatable
 {
@@ -54,5 +54,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'google2fa_timestamp' => 'integer',
     ];
 }

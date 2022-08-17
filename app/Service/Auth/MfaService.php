@@ -8,6 +8,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 
 class MfaService
 {
@@ -67,7 +68,7 @@ class MfaService
      */
     public function verify(array $conditions, User $user): void
     {
-        $secretKey = Arr::get($conditions, 'secretKey');
+        $secretKey = Arr::get($conditions, 'secret_key');
         assert(is_string($secretKey));
         $otp = Arr::get($conditions, 'otp');
         assert(is_string($otp));
@@ -80,6 +81,7 @@ class MfaService
 
         $user->update([
             'google2fa_secret' => $secretKey,
+            'google2fa_timestamp' => Carbon::now()->timestamp / 30,
         ]);
     }
 }

@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/authenticate', [AuthController::class, 'authenticate']);
+Route::post('/token', [AuthController::class, 'token']);
 
 Route::middleware('auth:sanctum')->name('mfa.')->group(function () {
     Route::get('/mfa', [MfaController::class, 'index'])->name('index');
