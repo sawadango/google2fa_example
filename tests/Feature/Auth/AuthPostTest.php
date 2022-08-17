@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -15,46 +16,83 @@ class AuthPostTest extends TestCase
 
     const WRONG_PASSWORD = 'wrong';
 
+    // /**
+    //  * @testdoc 正しいパスワードで200
+    //  *
+    //  * @return void
+    //  */
+    // public function testOk()
+    // {
+    //     $user = $this->createUser();
+
+
+    //     $payload = [
+    //         'email' => $user->email,
+    //         'password' => self::TRUE_PASSWORD,
+    //     ];
+    //     $response = $this->postAuthenticate($payload);
+
+    //     $response->assertStatus(200);
+    // }
+
+
+    // /**
+    //  * @testdoc 誤ったパスワードで401
+    //  */
+    // public function test401WrongPassword()
+    // {
+    //     $user = $this->createUser();
+
+    //     $payload = [
+    //         'email' => $user->email,
+    //         'password' => self::WRONG_PASSWORD,
+    //     ];
+    //     $response = $this->postAuthenticate($payload);
+
+    //     $response->assertStatus(401);
+    // }
+
     /**
-     * @testdoc 正しいパスワードで200
+     * @testdoc 正しいパスワードだが2要素認証のOTPが間違っているとき401
+     * 
      *
      * @return void
      */
-    public function testOk()
+    public function test401WrongOtp()
     {
         $user = $this->createUser();
 
-        $response = $this->postAuthenticate($user, self::TRUE_PASSWORD);
+        $secretKey = 'ZTDAND2IEPZWDCF7';
+        $user->google2fa_secret = $secretKey;
+        $user->google2fa_timestamp = Carbon::now()->timestamp / 30 - 2;
+        $user->save();
 
-        $response->assertStatus(200);
-    }
+        $payload = [
+            'email' => $user->email,
+            'password' => self::TRUE_PASSWORD,
+            'secret_key' => $secretKey,
+            'otp' => '951461',
+        ];
 
-
-    /**
-     * @testdoc 誤ったパスワードで401
-     */
-    public function test401()
-    {
-        $user = $this->createUser();
-
-        $response = $this->postAuthenticate($user, self::WRONG_PASSWORD);
+        $response = $this->postAuthenticate($payload);
 
         $response->assertStatus(401);
     }
 
     /**
-     * @param User $user
-     * @param string $password
-     *
+     * @param array $payload
+     * 
      * @return TestResponse
      */
-    private function postAuthenticate(User $user, string $password): TestResponse
+    private function postAuthenticate(array $payload): TestResponse
     {
         return $this->post(
-            '/api/authenticate',
+            '/api/token',
             [
-                'email'  => $user->email,
-                'password' => $password,
+                'email'  => $payload['email'],
+                'password' => $payload['password'],
+                'secret_key' => $payload['secret_key'],
+                'otp' => $payload['otp'],
             ]
         );
     }

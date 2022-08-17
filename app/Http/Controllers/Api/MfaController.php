@@ -12,8 +12,14 @@ use Throwable;
 
 class MfaController extends Controller
 {
+    /**
+     * @var MfaService
+     */
     private MfaService $service;
 
+    /**
+     * @param MfaService $service
+     */
     public function __construct(MfaService $service)
     {
         $this->service = $service;
@@ -51,7 +57,7 @@ class MfaController extends Controller
     {
         $validated = $request->validate([
             'otp' => ['required'],
-            'secretKey' => ['required'],
+            'secret_key' => ['required'],
         ]);
 
         $user = $request->user();

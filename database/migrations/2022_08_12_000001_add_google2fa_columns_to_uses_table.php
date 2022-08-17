@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('google2fa_secret')->nullable()->comment('Google2FA シークレットキー');
-            $table->string('google2fa_timestamp')->nullable()->comment('Google2FA タイムスタンプ');
+            $table->integer('google2fa_timestamp')->nullable()->comment('Google2FA タイムスタンプ');
         });
     }
 
