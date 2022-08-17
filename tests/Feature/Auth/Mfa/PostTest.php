@@ -28,7 +28,7 @@ class PostTest extends TestCase
         $otp = '196452';
 
         $response = $this->postMfa([
-            'secretKey' => $secretKey,
+            'secret_key' => $secretKey,
             'otp' => $otp
         ]);
 
@@ -50,7 +50,7 @@ class PostTest extends TestCase
         return $this->post(
             '/api/mfa',
             [
-                'secretKey'  => $conditions['secretKey'],
+                'secret_key'  => $conditions['secret_key'],
                 'otp' => $conditions['otp'],
             ]
         );
